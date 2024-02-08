@@ -1,13 +1,21 @@
 <script>
+// @ts-nocheck
+
+  import { fly } from "svelte/transition";
+  import LogoMin from "/logo-min.svg";
   export let URL_List;
+  export let active;
   let separateURLS;
 
   function corregirUrls(url) {
     // Eliminar el texto antes de "https://"
     url = url.replace(/.*?https:\/\//, "https://");
+    url = url.replace(/.*?http:\/\//, "http://");
+    url = url.replace(/.*?ftp:\/\//, "ftp://");
 
     // Si hay dos URLs en la misma línea, quedarse solo con la primera
     url = url.split("https://")[1] || url;
+    url = url.split("http://")[1] || url;
 
     // Eliminar "\" al inicio de la URL
     url = url.replace(/^\//, "");
@@ -50,192 +58,70 @@
     return urlRegex.test(url);
   }
 
+  function checkCheckbox(i) {
+    // Obtén el elemento de input correspondiente al índice
+    const checkbox = document.getElementById("checkbox" + i);
+    if (checkbox) {
+      // Marca el checkbox como checked
+      checkbox.checked = true;
+    }
+  }
+
   $: {
     separarURLs(URL_List);
     console.log("the component has mounted", separateURLS);
   }
 </script>
 
-<div
-  class="flex flex-grow items-center justify-center h-full text-gray-600 bg-gray-100"
->
-  <!-- Component Start -->
-
-  <div class="max-w-full p-8 bg-white rounded-lg shadow-lg w-96">
-    <div class="flex items-center mb-6">
-      <svg
-        class="h-8 w-8 text-indigo-500 stroke-current"
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
-        />
-      </svg>
-      <h4 class="font-semibold ml-3 text-lg">Lista URLs</h4>
-    </div>
-    {#each separateURLS as URL}
-      <div>
-        <input class="hidden" type="checkbox" id="task_1" checked />
-        <label
-          class="flex items-center h-10 px-2 rounded cursor-pointer hover:bg-gray-100"
-          for="task_1"
-        >
-          <span
-            class="flex items-center justify-center w-5 h-5 text-transparent border-2 border-gray-300 rounded-full"
-          >
-            <svg
-              class="w-4 h-4 fill-current"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </span>
-          <span class="ml-4 text-sm">{URL}</span>
-        </label>
+{#if active}
+  <div
+    class="flex flex-grow items-center justify-center h-full text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-slate-900"
+    in:fly={{ x: 200, duration: 2000 }}
+  >
+    <div
+      class="max-w-full p-8 bg-white dark:bg-zinc-800 rounded-lg shadow-lg w-96 dark:border-2 dark:border-orange-900"
+    >
+      <div class="flex items-center mb-6">
+        <img src={LogoMin} class="size-12" alt="Vite Logo" />
+        <h4 class="font-semibold ml-3 text-lg">Lista URLs</h4>
       </div>
-    {/each}
-
-    <!-- 
-			<div>
-				<input class="hidden" type="checkbox" id="task_2" checked>
-				<label class="flex items-center h-10 px-2 rounded cursor-pointer hover:bg-gray-100" for="task_2">
-					<span class="flex items-center justify-center w-5 h-5 text-transparent border-2 border-gray-300 rounded-full">
-						<svg class="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-							<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-						</svg>
-					</span>
-					<span class="ml-4 text-sm">Chill and smoke some Old Toby.</span>
-				</label>	
-			</div>
-			<div>
-				<input class="hidden" type="checkbox" id="task_3">
-				<label class="flex items-center h-10 px-2 rounded cursor-pointer hover:bg-gray-100" for="task_3">
-					<span class="flex items-center justify-center w-5 h-5 text-transparent border-2 border-gray-300 rounded-full">
-						<svg class="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-							<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-						</svg>
-					</span>
-					<span class="ml-4 text-sm">Keep ring secret and safe.</span>
-				</label>	
-			</div>
-			<div>
-				<input class="hidden" type="checkbox" id="task_4">
-				<label class="flex items-center h-10 px-2 rounded cursor-pointer hover:bg-gray-100" for="task_4">
-					<span class="flex items-center justify-center w-5 h-5 text-transparent border-2 border-gray-300 rounded-full">
-						<svg class="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-							<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-						</svg>
-					</span>
-					<span class="ml-4 text-sm">Meet Gandalf at Bree.</span>
-				</label>	
-			</div>
-			<div>
-				<input class="hidden" type="checkbox" id="task_5">
-				<label class="flex items-center h-10 px-2 rounded cursor-pointer hover:bg-gray-100" for="task_5">
-					<span class="flex items-center justify-center w-5 h-5 text-transparent border-2 border-gray-300 rounded-full">
-						<svg class="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-							<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-						</svg>
-					</span>
-					<span class="ml-4 text-sm">Destroy ring and defeat dark lord.</span>
-				</label>	
-			</div>
-			<button class="flex items-center w-full h-8 px-2 mt-2 text-sm font-medium rounded">
-				<svg class="w-5 h-5 text-gray-400 fill-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-				</svg>
-				<input class="flex-grow h-8 ml-4 bg-transparent focus:outline-none font-medium" type="text" placeholder="add a new task">
-			</button> -->
+      {#if separateURLS.length == 0}
+        No hay URLs válidas para mostrar.
+      {/if}
+      {#each separateURLS as URL, i}
+        <div>
+          <input class="hidden" id={"checkbox" + i} type="checkbox" />
+          <label
+            class="flex items-center h-10 px-2 rounded cursor-pointer hover:bg-gray-100 dark:hover:dark:bg-zinc-600"
+            for={"checkbox" + i}
+          >
+            <span
+              class="flex items-center justify-center w-5 h-5 text-transparent border-2 border-gray-300 rounded-full"
+            >
+              <svg
+                class="w-4 h-4 fill-current"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </span>
+            <span class="ml-4 text-sm">
+              <button on:click={() => checkCheckbox(i)}>
+                <a target="_blank" href={URL} id={i}>{URL}</a>
+              </button>
+            </span>
+          </label>
+        </div>
+      {/each}
+    </div>
   </div>
-  <!-- Component End  -->
-</div>
-
-<!-- 	<div class="flex flex-grow items-center justify-center bg-gray-900 h-full"> -->
-<!-- Component Start -->
-<!-- 	<div class="max-w-full p-8 bg-gray-800 rounded-lg shadow-lg w-96 text-gray-200">
-			<div class="flex items-center mb-6">
-				<svg class="h-8 w-8 text-indigo-500 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-				</svg>
-				<h4 class="font-semibold ml-3 text-lg">Sam's Jobs</h4>
-			</div>
-			<div>
-				<input class="hidden" type="checkbox" id="task_6" checked>
-				<label class="flex items-center h-10 px-2 rounded cursor-pointer hover:bg-gray-900" for="task_6">
-					<span class="flex items-center justify-center w-5 h-5 text-transparent border-2 border-gray-500 rounded-full">
-						<svg class="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-							<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-						</svg>
-					</span>
-					<span class="ml-4 text-sm">Trim the verge.</span>
-				</label>	
-			</div>
-			<div>
-				<input class="hidden" type="checkbox" id="task_7" checked>
-				<label class="flex items-center h-10 px-2 rounded cursor-pointer hover:bg-gray-900" for="task_7">
-					<span class="flex items-center justify-center w-5 h-5 text-transparent border-2 border-gray-500 rounded-full">
-						<svg class="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-							<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-						</svg>
-					</span>
-					<span class="ml-4 text-sm">Eavesdrop on Master Frodo & Gandalf.</span>
-				</label>	
-			</div>
-			<div>
-				<input class="hidden" type="checkbox" id="task_8">
-				<label class="flex items-center h-10 px-2 rounded cursor-pointer hover:bg-gray-900" for="task_8">
-					<span class="flex items-center justify-center w-5 h-5 text-transparent border-2 border-gray-500 rounded-full">
-						<svg class="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-							<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-						</svg>
-					</span>
-					<span class="ml-4 text-sm">Boil, mash, and stick potatoes in stew.</span>
-				</label>	
-			</div>
-			<div>
-				<input class="hidden" type="checkbox" id="task_9">
-				<label class="flex items-center h-10 px-2 rounded cursor-pointer hover:bg-gray-900" for="task_9">
-					<span class="flex items-center justify-center w-5 h-5 text-transparent border-2 border-gray-500 rounded-full">
-						<svg class="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-							<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-						</svg>
-					</span>
-					<span class="ml-4 text-sm">Carry Frodo.</span>
-				</label>	
-			</div>
-			<div>
-				<input class="hidden" type="checkbox" id="task_10">
-				<label class="flex items-center h-10 px-2 rounded cursor-pointer hover:bg-gray-900" for="task_10">
-					<span class="flex items-center justify-center w-5 h-5 text-transparent border-2 border-gray-500 rounded-full">
-						<svg class="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-							<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-						</svg>
-					</span>
-					<span class="ml-4 text-sm">Be all round legend.</span>
-				</label>	
-			</div>
-			<button class="flex items-center w-full h-8 px-2 mt-2 text-sm font-medium rounded">
-				<svg class="w-5 h-5 text-gray-400 fill-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-				</svg>
-				<input class="flex-grow h-8 ml-4 bg-transparent focus:outline-none font-medium" type="text" placeholder="add a new task">
-			</button>
-		</div> -->
-<!-- Component End  -->
-
-<!-- 	</div> -->
+{/if}
 
 <style>
   input[type="checkbox"]:checked + label span:first-of-type {
@@ -243,9 +129,13 @@
     border-color: #10b981;
     color: #fff;
   }
-
-  input[type="checkbox"]:checked + label span:nth-of-type(2) {
+  input[type="checkbox"]:checked + label a {
     text-decoration: line-through;
     color: #9ca3af;
   }
+
+  /*   input[type="checkbox"]:checked + label span:nth-of-type(2) {
+    text-decoration: line-through;
+    color: #9ca3af;
+  } */
 </style>
